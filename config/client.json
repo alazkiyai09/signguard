@@ -1,0 +1,27 @@
+{
+  "server_address": "localhost:5000",
+  "client_id": 0,
+  "is_malicious": false,
+  "attack_type": null,
+  "local_training": {
+    "epochs": 5,
+    "learning_rate": 0.01,
+    "batch_size": 32,
+    "optimizer": "sgd",
+    "momentum": 0.9
+  },
+  "data": {
+    "dataset": "mnist",
+    "data_path": "./data",
+    "train_split": 0.8
+  },
+  "model": {
+    "save_path": "./models",
+    "checkpoint_interval": 10
+  },
+  "security": {
+    "key_path": "./keys",
+    "sign_updates": true,
+    "verify_server": true
+  }
+}
