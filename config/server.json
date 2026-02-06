@@ -1,0 +1,33 @@
+{
+  "num_clients": 10,
+  "num_malicious": 2,
+  "aggregation_method": "multi_krum",
+  "signature_verification": true,
+  "anomaly_detection": {
+    "enabled": true,
+    "threshold": 2.5,
+    "method": "zscore"
+  },
+  "reputation_system": {
+    "enabled": true,
+    "initial_score": 1.0,
+    "decay_factor": 0.95,
+    "recovery_rate": 0.01
+  },
+  "model": {
+    "architecture": "cnn",
+    "input_shape": [28, 28, 1],
+    "num_classes": 10
+  },
+  "training": {
+    "rounds": 100,
+    "local_epochs": 5,
+    "learning_rate": 0.01,
+    "batch_size": 32
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "max_workers": 4
+  }
+}
