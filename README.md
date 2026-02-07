@@ -34,7 +34,7 @@ SignGuard introduces a cryptographic verification layer that:
 1. **Authenticates** each client's model update using ECDSA signatures
 2. **Validates** the integrity of gradients before aggregation
 3. **Detects** anomalous updates using statistical analysis
-4. **Maintains** client privacy through zero-knowledge proofs
+4. **Aggregates** securely using Byzantine-robust algorithms
 
 ---
 
@@ -48,15 +48,14 @@ SignGuard introduces a cryptographic verification layer that:
 | **Gradient Verification** | Statistical analysis to detect poisoned gradients |
 | **Byzantine-Robust Aggregation** | Krum and Multi-Krum aggregation algorithms |
 | **Reputation System** | Client scoring based on historical behavior |
-| **Zero-Knowledge Proofs** | Verify without revealing sensitive information |
+| **Gradient Verification** | Statistical analysis to detect poisoned gradients |
 
 ### Technical Features
 
-- **Framework Support**: PyTorch, TensorFlow (coming soon)
-- **Communication**: gRPC-based client-server architecture
-- **Monitoring**: Real-time attack detection dashboard
+- **Framework Support**: PyTorch
+- **Communication**: HTTP-based client-server architecture (gRPC planned)
 - **Logging**: Comprehensive audit trail for forensic analysis
-- **Configurable**: JSON-based configuration for easy customization
+- **Configurable**: JSON-based configuration files in `config/` directory
 
 ---
 
@@ -129,7 +128,6 @@ SignGuard introduces a cryptographic verification layer that:
 3. **Cryptography Module** (`src/crypto/`)
    - ECDSA key management
    - Signature generation/verification
-   - Zero-knowledge proof implementation
 
 4. **Aggregation Module** (`src/aggregation/`)
    - Krum algorithm
@@ -180,57 +178,83 @@ python -m pytest tests/
 #### 1. Start the Aggregation Server
 
 ```python
+import torch
+import torch.nn as nn
 from signguard.server import SignGuardServer
-from signguard.config import ServerConfig
 
-config = ServerConfig(
+# Create a simple model
+model = nn.Sequential(
+    nn.Linear(784, 128),
+    nn.ReLU(),
+    nn.Linear(128, 10)
+)
+
+# Initialize server
+server = SignGuardServer(
+    model=model,
     num_clients=10,
     num_malicious=2,
     aggregation_method="multi_krum",
     signature_verification=True
 )
 
-server = SignGuardServer(config)
-server.start(port=5000)
+# Register client public keys
+server.register_client(client_id=0, public_key_pem="...")
 ```
 
-#### 2. Register and Run Clients
+#### 2. Run Client Training
 
 ```python
+import torch
+import torch.nn as nn
 from signguard.client import SignGuardClient
-from signguard.config import ClientConfig
 
-config = ClientConfig(
-    server_address="localhost:5000",
-    local_epochs=5,
-    learning_rate=0.01
+# Create model
+model = nn.Sequential(
+    nn.Linear(784, 128),
+    nn.ReLU(),
+    nn.Linear(128, 10)
 )
 
-client = SignGuardClient(config)
-client.connect()
-client.train()
+# Initialize client
+client = SignGuardClient(
+    client_id=0,
+    model=model,
+    device=torch.device("cpu"),
+    is_malicious=False
+)
+
+# Train locally
+train_loader = ...  # Your data loader
+updates = client.train(train_loader, epochs=5, learning_rate=0.01)
+
+# Get signed update
+signed_update = client.get_signed_update(updates)
 ```
 
-#### 3. Monitor Attack Detection
+#### 3. Server Aggregation Round
 
 ```python
-from signguard.monitor import AttackMonitor
+# Collect updates from all clients
+client_updates = [signed_update_from_client_0, ...]
 
-monitor = AttackMonitor(server)
-print(monitor.get_detection_report())
+# Execute federated round
+results = server.federated_round(client_updates)
+print(f"Verified: {results['verified']}, Rejected: {results['rejected']}")
+
+# Get detection report
+report = server.get_detection_report()
+print(f"Total rounds: {report['total_rounds']}")
 ```
 
 ### Command-Line Interface
 
 ```bash
 # Start server
-python -m signguard.server --config config/server.json
+python -m src.server.server --config config/server.json
 
 # Run client
-python -m signguard.client --config config/client.json
-
-# Run simulation
-python -m signguard.simulate --clients 10 --malicious 3 --rounds 100
+python -m src.client.client --config config/client.json
 ```
 
 ### Configuration Example
@@ -241,17 +265,16 @@ python -m signguard.simulate --clients 10 --malicious 3 --rounds 100
   "num_clients": 10,
   "num_malicious": 2,
   "aggregation_method": "multi_krum",
-  "signature_verification": true,
-  "anomaly_detection": {
-    "enabled": true,
-    "threshold": 2.0,
-    "method": "zscore"
-  },
-  "reputation_system": {
-    "enabled": true,
-    "initial_score": 1.0,
-    "decay_factor": 0.95
-  }
+  "signature_verification": true
+}
+```
+
+`config/client.json`:
+```json
+{
+  "server_url": "http://localhost:5000",
+  "local_epochs": 5,
+  "learning_rate": 0.01
 }
 ```
 
@@ -265,8 +288,7 @@ signguard/
 │   ├── client/              # Client implementation
 │   │   ├── __init__.py
 │   │   ├── client.py        # Main client class
-│   │   ├── trainer.py       # Local training logic
-│   │   └── communicator.py  # Server communication
+│   │   └── trainer.py       # Local training logic
 │   ├── server/              # Server implementation
 │   │   ├── __init__.py
 │   │   ├── server.py        # Main server class
@@ -275,8 +297,7 @@ signguard/
 │   ├── crypto/              # Cryptography module
 │   │   ├── __init__.py
 │   │   ├── ecdsa.py         # ECDSA signature implementation
-│   │   ├── keys.py          # Key management
-│   │   └── zkp.py           # Zero-knowledge proofs
+│   │   └── keys.py          # Key management
 │   ├── aggregation/         # Aggregation algorithms
 │   │   ├── __init__.py
 │   │   ├── krum.py          # Krum algorithm
