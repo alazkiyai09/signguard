@@ -332,9 +332,11 @@ Output: Aggregated update
 | **Signature Verification** | ~2-3ms per update |
 | **Krum Aggregation (n=10)** | ~5ms |
 | **Multi-Krum Aggregation (n=10)** | ~8ms |
-| **Detection Rate** | 94.5% |
-| **False Positive Rate** | 3.2% |
-| **Overhead vs FedAvg** | ~8% |
+| **Detection Rate** | Algorithm design targets detection of Byzantine attacks through multi-layer verification |
+| **False Positive Rate** | Depends on anomaly threshold configuration |
+| **Overhead vs FedAvg** | ~8% (cryptographic + aggregation overhead) |
+
+**Note:** Detection rates are theoretical projections based on algorithm design. Empirical evaluation requires comprehensive attack simulation benchmarks which are not yet implemented. |
 
 ---
 
