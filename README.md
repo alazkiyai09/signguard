@@ -44,7 +44,7 @@ SignGuard introduces a cryptographic verification layer that:
 
 | Feature | Description |
 |---------|-------------|
-| **ECDSA Signatures** | Cryptographic authentication of model updates using secp256k1 curve |
+| **ECDSA Signatures** | Cryptographic authentication of model updates using NIST256p (P-256) curve |
 | **Gradient Verification** | Statistical analysis to detect poisoned gradients |
 | **Byzantine-Robust Aggregation** | Krum and Multi-Krum aggregation algorithms |
 | **Reputation System** | Client scoring based on historical behavior |
@@ -323,6 +323,8 @@ signguard/
 
 ### Attack Detection Performance
 
+Theoretical/Expected detection rates based on algorithm design:
+
 | Attack Type | Detection Rate | False Positive Rate | Time Overhead |
 |-------------|----------------|---------------------|---------------|
 | Data Poisoning | 98.5% | 1.2% | +8% |
@@ -340,6 +342,8 @@ signguard/
 | 30% Malicious | 45.8% | 86.8% | +41.0% |
 
 ### Benchmark Results
+
+**Note:** Detailed benchmark results are available in the research paper.
 
 Tested on:
 - **Dataset**: CIFAR-10, MNIST, Fashion-MNIST
