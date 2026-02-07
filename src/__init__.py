@@ -7,7 +7,7 @@ Licensed under MIT License - see LICENSE file for details.
 
 __version__ = "0.1.0"
 __author__ = "Ahmad Whafa Azka Al Azkiyai"
-__email__ = "alazkiyai09@gmail.com"
+__email__ = "azka.alazkiyai@outlook.com"
 
 from signguard.client import SignGuardClient
 from signguard.server import SignGuardServer
