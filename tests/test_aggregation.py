@@ -62,7 +62,7 @@ def test_krum_byzantine():
     result = krum(updates, num_malicious=1)
 
     # Result should be closer to benign updates
-    distance_to_benign = np.linalg_norm(result - benign[0])
+    distance_to_benign = np.linalg.norm(result - benign[0])
     distance_to_malicious = np.linalg.norm(result - malicious[0])
 
     assert distance_to_benign < distance_to_malicious

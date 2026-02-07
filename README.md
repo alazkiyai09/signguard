@@ -9,7 +9,7 @@
 
 **ECDSA-based Cryptographic Verification System for Detecting Poisoning Attacks in Federated Learning**
 
-[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Architecture](#architecture) • [Results](#results) • [Research](#research-context)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Architecture](#architecture) • [Research](#research-context)
 
 </div>
 
@@ -17,7 +17,9 @@
 
 ## Overview
 
-**SignGuard** is a novel security framework designed to protect federated learning systems from data poisoning and model poisoning attacks. By leveraging Elliptic Curve Digital Signature Algorithm (ECDSA) cryptographic signatures, SignGuard enables Byzantine-robust aggregation while preserving the privacy guarantees of federated learning.
+**SignGuard** is an educational implementation of a cryptographic verification system for federated learning security. This project demonstrates how ECDSA signatures can be combined with anomaly detection to protect against poisoning attacks in federated learning systems.
+
+> **Note**: The name "SignGuard" has been used in academic research (e.g., Xu et al., 2021). This is an independent educational implementation inspired by FL security research principles. For the original SignGuard framework, see the academic literature.
 
 ### The Problem
 
